@@ -37,6 +37,6 @@
         </config-file>
 
         <framework src="android/iadbox-build.gradle" custom="true" type="gradleReference" />
-        <resource-file src="android/androidstudio_sdk_1_4_11_iadbox-release.aar" target="lib/androidstudio_sdk_1_4_11_iadbox-release.aar" />
+        <resource-file src="android/androidstudio_sdk_1_4_11_iadbox-release.aar" target="libs/androidstudio_sdk_1_4_11_iadbox-release.aar" />
     </platform>
 </plugin>
