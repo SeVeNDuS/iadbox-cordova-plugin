@@ -54,15 +54,13 @@ public class iAdBoxPlugin extends CordovaPlugin {
     private String externalId = "";
     private String pushDeviceRegistrationId = "";
 
-    private PeanutLabsManager plManager;
-
     protected OnResponseListener onResponseListener = new OnResponseListener() {
         public void onSuccess() {
-            Log.w(LOGTAG, 'onResponseListener onSuccess');
+            Log.w(LOGTAG, "onResponseListener onSuccess");
         }
         
         public void onFailure(String message) {
-            Log.w(LOGTAG, 'onResponseListener onFailure ' + message);
+            Log.w(LOGTAG, "onResponseListener onFailure " + message);
         }
     };
 
