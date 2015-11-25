@@ -79,6 +79,9 @@ public class iAdBoxPlugin extends CordovaPlugin {
         }  else if (ACTION_SET_SECTIONS.equals(action)) {
             JSONObject options = args.optJSONObject(0);
             result = executeSetSections(options, callbackContext);
+        } else if (ACTION_OPEN_INBOX.equals(action)) {
+            JSONObject options = args.optJSONObject(0);
+            result = executeOpenInbox(options, callbackContext);
         }
 
         if (result != null) callbackContext.sendPluginResult( result );
@@ -169,27 +172,28 @@ public class iAdBoxPlugin extends CordovaPlugin {
         boolean showDeals = true;
         boolean showInvite = true;
         boolean showProfie = true;
-         
-        if (options.has(OPT_AFFILIATE_ID)) {
-            this.affiliateId = options.optInt(OPT_AFFILIATE_ID);
-        }
-        if (options.has(OPT_EXTERNAL_ID)) {
-            this.externalId = options.optString(OPT_EXTERNAL_ID);
-        }
-        if (options.has(OPT_PUSH_DEVICE_REGISTRADTION_ID)) {
-            this.pushDeviceRegistrationId = options.optString(OPT_PUSH_DEVICE_REGISTRADTION_ID);
-        }
         
         try {
             Context context = cordova.getActivity().getApplicationContext();
             Qustodian.getInstance(context)
-                .createSession(context, 
-                    this.externalId, 
-                    this.affiliateId, 
-                    this.pushDeviceRegistrationId, 
-                    onResponseListener);
+                .setSections(showInbox,  showDeals,  showInvite, showProfile);
         } catch (RuntimeException e){
             Log.d(LOGTAG, e.getLocalizedMessage());
         }
+    }
+
+    private PluginResult executeOpenInbox(JSONObject options, CallbackContext callbackContext) {
+        Log.w(LOGTAG, "executeOpenInbox");
+        
+        try {
+            Context context = cordova.getActivity().getApplicationContext();
+            Qustodian.getInstance(context).openInbox(context);
+        
+            callbackContext.success();
+        } catch (RuntimeException e){
+            Log.d(LOGTAG, e.getLocalizedMessage());
+        }
+
+        return null;
     }
 }
