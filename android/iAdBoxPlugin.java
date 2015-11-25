@@ -19,7 +19,7 @@ import org.json.JSONObject;
 public class iAdBoxPlugin extends CordovaPlugin {
 
     private static final String LOGTAG = "iAdBoxPlugin";
-    private static final String DEFAULT_AFFILIATE_ID = 'futmondo';
+    private static final String DEFAULT_AFFILIATE_ID = "futmondo";
 
     private static final String ACTION_CREATE_USER = "createUser";
     private static final String ACTION_CREATE_SESSION = "createSession";
