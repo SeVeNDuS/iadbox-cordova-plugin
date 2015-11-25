@@ -1,0 +1,42 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+    <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        id="iadbox-cordova-plugin" version="0.0.1">
+    <name>iAdBox</name>
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
+    <description>iAdBox Cordova Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,iadbox,ads</keywords>
+    <js-module src="www/iadbox.js" name="iAdBox">
+        <clobbers target="window.plugins.iadbox" />
+    </js-module>
+
+    <platform name="android">
+        <framework src="com.google.android.gms:play-services-ads:+" />
+        
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="iAdBox">
+                <param name="android-package" value="uk.mondosports.plugins.iadbox.iAdBoxPlugin"/>
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <activity android:configChanges="keyboard|keyboardHidden|orientation|screenSize" android:name="com.qustodian.sdk.WebActivity" android:label="@string/qustodian_sdk" android:theme="@style/QustodianSdkManagerTheme" ></activity>
+            <activity android:name="com.qustodian.sdk.NotificationActivity" android:label="@string/qustodian_sdk" android:theme="@style/QustodianSdkManagerTheme" ></activity>
+            <!-- Google Play Services -->
+            <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+        </config-file>
+
+        <framework src="android/iadbox-build.gradle" custom="true" type="gradleReference" />
+        <resource-file src="android/foo.aar" target="lib/androidstudio_sdk_1_4_11_iadbox-release.aar" />
+    </platform>
+</plugin>
