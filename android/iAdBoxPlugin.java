@@ -1,11 +1,14 @@
 package uk.mondosports.plugins.iadbox;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Intent;
+import android.content.Context;
 import android.util.Log;
 
+import com.google.android.gms.iid.InstanceID;
 import com.qustodian.sdk.*;
 
 import org.apache.cordova.CallbackContext;
@@ -55,12 +58,14 @@ public class iAdBoxPlugin extends CordovaPlugin {
     private String pushDeviceRegistrationId = "";
 
     protected OnResponseListener onResponseListener = new OnResponseListener() {
-        public void onSuccess() {
-            Log.w(LOGTAG, "onResponseListener onSuccess");
+        @Override
+        public void onSuccess(String s) {
+            Log.w(LOGTAG, "onResponseListener onSuccess: " + s);
         }
-        
-        public void onFailure(String message) {
-            Log.w(LOGTAG, "onResponseListener onFailure " + message);
+
+        @Override
+        public void onError(int i, String s) {
+            Log.w(LOGTAG, "onResponseListener onFailure " + s);
         }
     };
 
@@ -97,15 +102,33 @@ public class iAdBoxPlugin extends CordovaPlugin {
         return null;
     }
 
+    private String getPushDeviceRegistrationId() {
+        String authorizedEntity = "PROJECTID"; // Project id from Google Developer Console
+        String scope = "GCM"; // e.g. communicating using GCM, but you can use any
+        // URL-safe characters up to a maximum of 1000, or
+        // you can also leave it blank.
+        String token;
+
+        try {
+            token = InstanceID.getInstance(cordova.getActivity().getApplicationContext()).getToken(authorizedEntity, scope);
+        }
+        catch (IOException e) {
+            token = "";
+        }
+        return token;
+    }
+
     private void createUser( JSONObject options ) {
         if (options.has(OPT_AFFILIATE_ID)) {
-            this.affiliateId = options.optInt(OPT_AFFILIATE_ID);
+            this.affiliateId = options.optString(OPT_AFFILIATE_ID);
         }
         if (options.has(OPT_EXTERNAL_ID)) {
             this.externalId = options.optString(OPT_EXTERNAL_ID);
         }
         if (options.has(OPT_PUSH_DEVICE_REGISTRADTION_ID)) {
             this.pushDeviceRegistrationId = options.optString(OPT_PUSH_DEVICE_REGISTRADTION_ID);
+        } else {
+            this.pushDeviceRegistrationId = this.getPushDeviceRegistrationId();
         }
         
         try {
@@ -133,7 +156,7 @@ public class iAdBoxPlugin extends CordovaPlugin {
 
     private void createSession( JSONObject options ) {
         if (options.has(OPT_AFFILIATE_ID)) {
-            this.affiliateId = options.optInt(OPT_AFFILIATE_ID);
+            this.affiliateId = options.optString(OPT_AFFILIATE_ID);
         }
         if (options.has(OPT_EXTERNAL_ID)) {
             this.externalId = options.optString(OPT_EXTERNAL_ID);
@@ -169,12 +192,12 @@ public class iAdBoxPlugin extends CordovaPlugin {
         boolean showInbox = true;
         boolean showDeals = true;
         boolean showInvite = true;
-        boolean showProfie = true;
+        boolean showProfile = true;
         
         try {
             Context context = cordova.getActivity().getApplicationContext();
             Qustodian.getInstance(context)
-                .setSections(showInbox,  showDeals,  showInvite, showProfile);
+                    .setSections(showInbox, showDeals, showInvite, showProfile);
         } catch (RuntimeException e){
             Log.d(LOGTAG, e.getLocalizedMessage());
         }
