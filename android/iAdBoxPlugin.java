@@ -6,7 +6,7 @@ import java.util.Map;
 import android.content.Intent;
 import android.util.Log;
 
-import com.peanutlabs.plsdk.*;
+import com.qustodian.sdk.*;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
