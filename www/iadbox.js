@@ -1,11 +1,11 @@
 function iAdBoxPlugin() {}
 
-iAdBoxPlugin.prototype.createUser = function (affiliateId, userId, success, error) {
-	cordova.exec(success, error, 'iAdBox', 'createUser', [affiliateId, userId]);
+iAdBoxPlugin.prototype.createUser = function (options, success, error) {
+	cordova.exec(success, error, 'iAdBox', 'createUser', [options]);
 };
 
-iAdBoxPlugin.prototype.createSession = function (affiliateId, userId, success, error) {
-	cordova.exec(success, error, 'iAdBox', 'createSession', [affiliateId, userId]);
+iAdBoxPlugin.prototype.createSession = function (options, success, error) {
+	cordova.exec(success, error, 'iAdBox', 'createSession', [options]);
 };
 
 iAdBoxPlugin.prototype.setSections = function (success, error) {
