@@ -7,7 +7,6 @@ repositories{
 
 dependencies {
  	compile(name:'androidstudio_sdk_1_4_11_iadbox-release', ext:'aar')
- 	compile 'com.google.android.gms:play-services:8.1.0'
 }
 
 android {
