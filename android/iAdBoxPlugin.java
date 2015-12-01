@@ -6,6 +6,7 @@ import java.util.Map;
 
 import android.content.Intent;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 
 import com.google.android.gms.iid.InstanceID;
@@ -14,7 +15,8 @@ import com.qustodian.sdk.*;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
-import org.apache.cordova.PluginResult.Status;
+import org.apache.cordova.*;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,57 +26,48 @@ public class iAdBoxPlugin extends CordovaPlugin {
     private static final String LOGTAG = "iAdBoxPlugin";
     private static final String DEFAULT_AFFILIATE_ID = "futmondo";
 
+    private static final String ACTION_CREATE_USER_AND_SESSION = "createUserAndSession";
     private static final String ACTION_CREATE_USER = "createUser";
     private static final String ACTION_CREATE_SESSION = "createSession";
-    private static final String ACTION_SET_SECTIONS = "setSections";
     private static final String ACTION_OPEN_INBOX = "openInbox";
-    private static final String ACTION_OPEN_DEALS = "openDeals";
-    private static final String ACTION_OPEN_PROFILE = "openProfile";
-    private static final String ACTION_OPEN_NOTIFICATIONS_SETTINGS = "openNotificationsSettings";
-    private static final String ACTION_OPEN_MY_PREFERENCES = "openMyPreferences";
-    private static final String ACTION_OPEN_ACTION = "openAction";
-    private static final String ACTION_GET_SUMMARY_MESSAGES = "getSummaryOfMessages";
-    private static final String ACTION_GET_PRODUCTS = "getProducts";
-    private static final String ACTION_GET_CATEGORIES = "getCategories";
-    private static final String ACTION_SET_CUSTOM_TOAST_COLORS = "setCustomToastColors";
     private static final String ACTION_GET_MESSAGES_COUNT = "getMessagesCount";
-    private static final String ACTION_GET_DEALS_COUNT = "getDealsCount";
-    private static final String ACTION_SET_PUSH_MESSAGE = "setPushMessage";
-    private static final String ACTION_SET_BORDER_COLOR = "setBorderColor";
-    private static final String ACTION_SET_TITLE = "setTitle";
-    private static final String ACTION_SET_THEME = "setTheme";
-    private static final String ACTION_SET_MAX_SHOWS_DAY = "setMaxShowsPerDay";
-    private static final String ACTION_SET_APP_OPENING_SHOW = "setAppOpeningsPerShow";
-    private static final String ACTION_REPLACE_BUTTON = "replaceButton";
-    private static final String ACTION_SET_OPEN_SHARE_ACTION_LISTENER = "setOpenShareActionListener";
-    private static final String ACTION_REPLACE_CUSTOM_NETWORK_ERROR_STRING = "replaceCustomNetworkErrorStringResourceId";
+    private static final String ACTION_CUSTOMIZE = "customize";
 
     private static final String OPT_EXTERNAL_ID = "externalId";
     private static final String OPT_AFFILIATE_ID = "affiliateId";
-    private static final String OPT_PUSH_DEVICE_REGISTRADTION_ID = "pushDeviceRegistrationId";
     private static final String OPT_GOOGLE_PROJECT_ID = "googleProjectId";
+    private static final String OPT_THEME = "theme";
+    private static final String OPT_BORDER_COLOR = "borderColor";
+    private static final String OPT_TITLE = "title";
 
-    private String affiliateId = DEFAULT_AFFILIATE_ID;
-    private String externalId = "";
-    private String googleProjectId = "";
-    private String pushDeviceRegistrationId = "";
+    @Override
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+        super.initialize(cordova, webView);
+        Log.v(LOGTAG, "Plugin initialized");
+    }
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        Log.v(LOGTAG, action);
         PluginResult result = null;
-
-        if (ACTION_CREATE_USER.equals(action)) {
-            JSONObject options = args.optJSONObject(0);
-            result = executeCreateUser(options, callbackContext);
-        } else if (ACTION_CREATE_SESSION.equals(action)) {
-            JSONObject options = args.optJSONObject(0);
-            result = executeCreateSession(options, callbackContext);
-        }  else if (ACTION_SET_SECTIONS.equals(action)) {
-            JSONObject options = args.optJSONObject(0);
-            result = executeSetSections(options, callbackContext);
-        } else if (ACTION_OPEN_INBOX.equals(action)) {
-            JSONObject options = args.optJSONObject(0);
-            result = executeOpenInbox(options, callbackContext);
+        try {
+            if (ACTION_CREATE_USER_AND_SESSION.equals(action)) {
+                result = createUserAndSession(args, callbackContext);
+            } else if (ACTION_CREATE_USER.equals(action)) {
+                result = createUser(args, callbackContext);
+            } else if (ACTION_CREATE_SESSION.equals(action)) {
+                result = createSession(args, callbackContext);
+            } else if (ACTION_OPEN_INBOX.equals(action)) {
+                result = openInbox(args, callbackContext);
+            }  else if (ACTION_GET_MESSAGES_COUNT.equals(action)) {
+                result = getMessagesCount(args, callbackContext);
+            } else if (ACTION_CUSTOMIZE.equals(action)) {
+                result = customize(args, callbackContext);
+            }
+        } catch (JSONException e) {
+            callbackContext.error(e.getMessage());
+        } catch (Exception e) {
+            callbackContext.error(e.getMessage());
         }
 
         if (result != null) callbackContext.sendPluginResult( result );
@@ -82,13 +75,220 @@ public class iAdBoxPlugin extends CordovaPlugin {
         return true;
     }
 
-    private PluginResult executeCreateUser(JSONObject options, CallbackContext callbackContext) {
-        Log.w(LOGTAG, "executeCreateUser");
+    private PluginResult createUserAndSession(JSONArray args, final CallbackContext callbackContext) throws Exception, JSONException {
+        JSONObject obj = args.getJSONObject(0);
 
-        this.createUser(options, callbackContext);
+        String googleProjectId = obj.getString(OPT_GOOGLE_PROJECT_ID);
+
+        final String affiliateId = obj.getString(OPT_AFFILIATE_ID);
+        final String externalId = obj.getString(OPT_EXTERNAL_ID);
+        final String pushDeviceRegistrationId = this.getPushDeviceRegistrationId(googleProjectId);
+
+        if (affiliateId == "") {
+            throw new Exception("Affiliate ID is required");
+        }
+
+        cordova.getActivity().runOnUiThread(runCreateUser(affiliateId, externalId, pushDeviceRegistrationId, callbackContext, true));
 
         return null;
     }
+
+    private PluginResult createUser(JSONArray args, final CallbackContext callbackContext) throws Exception, JSONException {
+        JSONObject obj = args.getJSONObject(0);
+
+        String googleProjectId = obj.getString(OPT_GOOGLE_PROJECT_ID);
+
+        final String affiliateId = obj.getString(OPT_AFFILIATE_ID);
+        final String externalId = obj.getString(OPT_EXTERNAL_ID);
+        final String pushDeviceRegistrationId = this.getPushDeviceRegistrationId(googleProjectId);
+
+        if (affiliateId == "") {
+            throw new Exception("Affiliate ID is required");
+        }
+
+        cordova.getActivity().runOnUiThread(runCreateUser(affiliateId, externalId, pushDeviceRegistrationId, callbackContext, false));
+
+        return null;
+    }
+
+    private PluginResult createSession(JSONArray args, final CallbackContext callbackContext) throws Exception, JSONException {
+        JSONObject obj = args.getJSONObject(0);
+
+        String googleProjectId = obj.getString(OPT_GOOGLE_PROJECT_ID);
+
+        final String affiliateId = obj.getString(OPT_AFFILIATE_ID);
+        final String externalId = obj.getString(OPT_EXTERNAL_ID);
+        final String pushDeviceRegistrationId = this.getPushDeviceRegistrationId(googleProjectId);
+
+        if (affiliateId == "") {
+            throw new Exception("Affiliate ID is required");
+        }
+
+        cordova.getActivity().runOnUiThread(runCreateSession(affiliateId, externalId, pushDeviceRegistrationId, callbackContext));
+
+        return null;
+    }
+
+    private PluginResult openInbox(JSONArray args, final CallbackContext callbackContext) throws Exception, JSONException {
+        JSONObject obj = args.getJSONObject(0);
+
+        cordova.getActivity().runOnUiThread(runOpenInbox(callbackContext));
+
+        return null;
+    }
+
+    private PluginResult getMessagesCount(JSONArray args, final CallbackContext callbackContext) throws Exception, JSONException {
+        JSONObject obj = args.getJSONObject(0);
+
+        cordova.getActivity().runOnUiThread(runGetMessagesCount(callbackContext));
+
+        return null;
+    }
+
+    private PluginResult customize(JSONArray args, final CallbackContext callbackContext) throws Exception, JSONException {
+        JSONObject obj = args.getJSONObject(0);
+
+        final String theme = obj.getString(OPT_THEME);
+        final String borderColor = obj.getString(OPT_BORDER_COLOR);
+        final String title = obj.getString(OPT_TITLE);
+
+        cordova.getActivity().runOnUiThread(runCustomize(theme, borderColor, title, callbackContext));
+
+        return null;
+    }
+
+    private Runnable runCreateUser(final String affiliateId, final String externalId, final String pushDeviceRegistrationId, final CallbackContext callbackContext, final boolean executeCreateSession) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Qustodian.getInstance(cordova.getActivity())
+                        .createUser(cordova.getActivity(),
+                                externalId,
+                                affiliateId,
+                                pushDeviceRegistrationId,
+                                new OnResponseListener() {
+                                    @Override
+                                    public void onSuccess(String s) {
+                                        Log.w(LOGTAG, "onResponseListener onSuccess: " + s);
+                                        if (executeCreateSession) {
+                                            runCreateSession(affiliateId, externalId, pushDeviceRegistrationId, callbackContext);
+                                        } else {
+                                            callbackContext.success(s);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(int i, String s) {
+                                        Log.w(LOGTAG, "onResponseListener onFailure " + s);
+                                        callbackContext.error(s);
+                                    }
+                                });
+
+                } catch (RuntimeException e) {
+                    callbackContext.error(e.getMessage());
+                }
+            }
+        };
+    };
+
+    private Runnable runCreateSession(final String affiliateId, final String externalId, final String pushDeviceRegistrationId, final CallbackContext callbackContext) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Qustodian.getInstance(cordova.getActivity())
+                            .createSession(cordova.getActivity(),
+                                    externalId,
+                                    affiliateId,
+                                    pushDeviceRegistrationId,
+                                    new OnResponseListener() {
+                                        @Override
+                                        public void onSuccess(String s) {
+                                            Log.w(LOGTAG, "onResponseListener onSuccess: " + s);
+                                            callbackContext.success(s);
+                                        }
+
+                                        @Override
+                                        public void onError(int i, String s) {
+                                            Log.w(LOGTAG, "onResponseListener onFailure " + s);
+                                            callbackContext.error(s);
+                                        }
+                                    });
+
+                } catch (RuntimeException e) {
+                    callbackContext.error(e.getMessage());
+                }
+            }
+        };
+    };
+
+    private Runnable runOpenInbox(final CallbackContext callbackContext) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Context context = cordova.getActivity();
+                    Qustodian.getInstance(context).openInbox(context);
+                    callbackContext.success();
+                } catch (RuntimeException e) {
+                    callbackContext.error(e.getMessage());
+                }
+            }
+        };
+    };
+
+    private Runnable runGetMessagesCount(final CallbackContext callbackContext) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Context context = cordova.getActivity();
+                    Qustodian.getInstance(context)
+                            .getMessagesCount(context,
+                                    new OnResponseMessagesCountListener() {
+                                        @Override
+                                        public void onSuccess(int messageCount) {
+                                            Log.w(LOGTAG, "OnResponseMessagesCountListener onSuccess: " + messageCount);
+                                            callbackContext.success(messageCount);
+                                        }
+
+                                        @Override
+                                        public void onError(int i, String s) {
+                                            Log.w(LOGTAG, "OnResponseMessagesCountListener onFailure " + s);
+                                            callbackContext.error(s);
+                                        }
+                                    });
+                } catch (RuntimeException e) {
+                    callbackContext.error(e.getMessage());
+                }
+            }
+        };
+    };
+
+    private Runnable runCustomize(final String theme, final String borderColor, final String title, final CallbackContext callbackContext) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Context context = cordova.getActivity();
+                    if (theme != "") {
+                        //Qustodian.getInstance(context).set.setTheme(theme);
+                    }
+                    if (borderColor != "") {
+                        int color = Integer.parseInt(borderColor.replaceFirst("#", ""), 16);
+                        Qustodian.getInstance(context).setBorderColor(color);
+                    }
+                    if (title != "") {
+                        Qustodian.getInstance(context).setTitle(title);
+                    }
+                    callbackContext.success();
+                } catch (RuntimeException e) {
+                    callbackContext.error(e.getMessage());
+                }
+            }
+        };
+    };
 
     private String getPushDeviceRegistrationId(String projectId) {
         String authorizedEntity = projectId; // Project id from Google Developer Console
@@ -104,135 +304,5 @@ public class iAdBoxPlugin extends CordovaPlugin {
             token = "";
         }
         return token;
-    }
-
-    private void createUser(JSONObject options, final CallbackContext callbackContext) {
-        if (options.has(OPT_AFFILIATE_ID)) {
-            this.affiliateId = options.optString(OPT_AFFILIATE_ID);
-        }
-        if (options.has(OPT_EXTERNAL_ID)) {
-            this.externalId = options.optString(OPT_EXTERNAL_ID);
-        }
-        if (options.has(OPT_GOOGLE_PROJECT_ID)) {
-            this.googleProjectId = options.optString(OPT_GOOGLE_PROJECT_ID);
-        }
-        if (options.has(OPT_PUSH_DEVICE_REGISTRADTION_ID)) {
-            this.pushDeviceRegistrationId = options.optString(OPT_PUSH_DEVICE_REGISTRADTION_ID);
-        } else {
-            this.pushDeviceRegistrationId = this.getPushDeviceRegistrationId(this.googleProjectId);
-        }
-
-        try {
-            Context context = cordova.getActivity();
-            Qustodian.getInstance(context)
-                    .createUser(context,
-                            this.externalId,
-                            this.affiliateId,
-                            this.pushDeviceRegistrationId,
-                            new OnResponseListener() {
-                                @Override
-                                public void onSuccess(String s) {
-                                    Log.w(LOGTAG, "onResponseListener onSuccess: " + s);
-                                    callbackContext.success(s);
-                                }
-
-                                @Override
-                                public void onError(int i, String s) {
-                                    Log.w(LOGTAG, "onResponseListener onFailure " + s);
-                                    callbackContext.error(s);
-                                }
-                            });
-        } catch (RuntimeException e){
-            Log.d(LOGTAG, e.getLocalizedMessage());
-        }
-    }
-
-    private PluginResult executeCreateSession(JSONObject options, CallbackContext callbackContext) {
-        Log.w(LOGTAG, "executeCreateSession");
-
-        this.createSession(options, callbackContext);
-
-        return null;
-    }
-
-    private void createSession(JSONObject options, final CallbackContext callbackContext) {
-        if (options.has(OPT_AFFILIATE_ID)) {
-            this.affiliateId = options.optString(OPT_AFFILIATE_ID);
-        }
-        if (options.has(OPT_EXTERNAL_ID)) {
-            this.externalId = options.optString(OPT_EXTERNAL_ID);
-        }
-        if (options.has(OPT_GOOGLE_PROJECT_ID)) {
-            this.googleProjectId = options.optString(OPT_GOOGLE_PROJECT_ID);
-        }
-        if (options.has(OPT_PUSH_DEVICE_REGISTRADTION_ID)) {
-            this.pushDeviceRegistrationId = options.optString(OPT_PUSH_DEVICE_REGISTRADTION_ID);
-        } else {
-            this.pushDeviceRegistrationId = this.getPushDeviceRegistrationId(this.googleProjectId);
-        }
-
-        try {
-            Context context = cordova.getActivity();
-            Qustodian.getInstance(context)
-                    .createSession(context,
-                            this.externalId,
-                            this.affiliateId,
-                            this.pushDeviceRegistrationId,
-                            new OnResponseListener() {
-                                @Override
-                                public void onSuccess(String s) {
-                                    Log.w(LOGTAG, "onResponseListener onSuccess: " + s);
-                                    callbackContext.success(s);
-                                }
-
-                                @Override
-                                public void onError(int i, String s) {
-                                    Log.w(LOGTAG, "onResponseListener onFailure " + s);
-                                    callbackContext.error(s);
-                                }
-                            });
-        } catch (RuntimeException e){
-            Log.d(LOGTAG, e.getLocalizedMessage());
-        }
-    }
-
-    private PluginResult executeSetSections(JSONObject options, CallbackContext callbackContext) {
-        Log.w(LOGTAG, "executeCreateSession");
-
-        this.setSections(options);
-
-        callbackContext.success();
-
-        return null;
-    }
-
-    private void setSections( JSONObject options ) {
-        boolean showInbox = true;
-        boolean showDeals = true;
-        boolean showInvite = true;
-        boolean showProfile = true;
-
-        try {
-            Context context = cordova.getActivity();
-            Qustodian.getInstance(context)
-                    .setSections(showInbox, showDeals, showInvite, showProfile);
-        } catch (RuntimeException e){
-            Log.d(LOGTAG, e.getLocalizedMessage());
-        }
-    }
-
-    private PluginResult executeOpenInbox(JSONObject options, CallbackContext callbackContext) {
-        Log.w(LOGTAG, "executeOpenInbox");
-
-        try {
-            Context context = cordova.getActivity();
-            Qustodian.getInstance(context).openInbox(context);
-
-            callbackContext.success();
-        } catch (RuntimeException e){
-            Log.d(LOGTAG, e.getLocalizedMessage());
-        }
-
-        return null;
     }
 }
