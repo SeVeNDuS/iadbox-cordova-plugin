@@ -58,7 +58,7 @@ public class iAdBoxPlugin extends CordovaPlugin {
             } else if (ACTION_CREATE_SESSION.equals(action)) {
                 result = createSession(args, callbackContext);
             } else if (ACTION_OPEN_INBOX.equals(action)) {
-                result = openInbox(args, callbackContext);
+                result = openInbox(callbackContext);
             }  else if (ACTION_GET_MESSAGES_COUNT.equals(action)) {
                 result = getMessagesCount(args, callbackContext);
             } else if (ACTION_CUSTOMIZE.equals(action)) {
@@ -129,8 +129,8 @@ public class iAdBoxPlugin extends CordovaPlugin {
         return null;
     }
 
-    private PluginResult openInbox(JSONArray args, final CallbackContext callbackContext) throws Exception, JSONException {
-        JSONObject obj = args.getJSONObject(0);
+    private PluginResult openInbox(final CallbackContext callbackContext) throws Exception, JSONException {
+        Log.v(LOGTAG, "Enter on OpenInbox");
 
         cordova.getActivity().runOnUiThread(runOpenInbox(callbackContext));
 
@@ -170,9 +170,9 @@ public class iAdBoxPlugin extends CordovaPlugin {
                                 new OnResponseListener() {
                                     @Override
                                     public void onSuccess(String s) {
-                                        Log.w(LOGTAG, "onResponseListener onSuccess: " + s);
+                                        Log.w(LOGTAG, "createUser: onResponseListener onSuccess: " + s);
                                         if (executeCreateSession) {
-                                            runCreateSession(affiliateId, externalId, pushDeviceRegistrationId, callbackContext);
+                                            cordova.getActivity().runOnUiThread(runCreateSession(affiliateId, externalId, pushDeviceRegistrationId, callbackContext));
                                         } else {
                                             callbackContext.success(s);
                                         }
@@ -180,7 +180,7 @@ public class iAdBoxPlugin extends CordovaPlugin {
 
                                     @Override
                                     public void onError(int i, String s) {
-                                        Log.w(LOGTAG, "onResponseListener onFailure " + s);
+                                        Log.w(LOGTAG, "createUser: onResponseListener onFailure " + s);
                                         callbackContext.error(s);
                                     }
                                 });
@@ -205,13 +205,13 @@ public class iAdBoxPlugin extends CordovaPlugin {
                                     new OnResponseListener() {
                                         @Override
                                         public void onSuccess(String s) {
-                                            Log.w(LOGTAG, "onResponseListener onSuccess: " + s);
+                                            Log.w(LOGTAG, "createSession: onResponseListener onSuccess: " + s);
                                             callbackContext.success(s);
                                         }
 
                                         @Override
                                         public void onError(int i, String s) {
-                                            Log.w(LOGTAG, "onResponseListener onFailure " + s);
+                                            Log.w(LOGTAG, "createSession: onResponseListener onFailure " + s);
                                             callbackContext.error(s);
                                         }
                                     });
@@ -276,7 +276,7 @@ public class iAdBoxPlugin extends CordovaPlugin {
                         //Qustodian.getInstance(context).set.setTheme(theme);
                     }
                     if (borderColor != "") {
-                        int color = Integer.parseInt(borderColor.replaceFirst("#", ""), 16);
+                        int color = Color.parseColor(borderColor);
                         Qustodian.getInstance(context).setBorderColor(color);
                     }
                     if (title != "") {

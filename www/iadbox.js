@@ -53,6 +53,12 @@ var iAdBoxPlugin = {
 		});
 
 		cordova.exec(successCallback, failureCallback, 'iAdBox', 'customize', options);
+	},
+
+	getMessagesCount: function(successCallback, failureCallback) {
+		var options = [];
+		
+		cordova.exec(successCallback, failureCallback, 'iAdBox', 'getMessagesCount', options);
 	}
 };
 
