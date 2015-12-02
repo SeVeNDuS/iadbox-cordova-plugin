@@ -60,7 +60,7 @@ public class iAdBoxPlugin extends CordovaPlugin {
             } else if (ACTION_OPEN_INBOX.equals(action)) {
                 result = openInbox(callbackContext);
             }  else if (ACTION_GET_MESSAGES_COUNT.equals(action)) {
-                result = getMessagesCount(args, callbackContext);
+                result = getMessagesCount(callbackContext);
             } else if (ACTION_CUSTOMIZE.equals(action)) {
                 result = customize(args, callbackContext);
             }
@@ -137,9 +137,7 @@ public class iAdBoxPlugin extends CordovaPlugin {
         return null;
     }
 
-    private PluginResult getMessagesCount(JSONArray args, final CallbackContext callbackContext) throws Exception, JSONException {
-        JSONObject obj = args.getJSONObject(0);
-
+    private PluginResult getMessagesCount(final CallbackContext callbackContext) throws Exception, JSONException {
         cordova.getActivity().runOnUiThread(runGetMessagesCount(callbackContext));
 
         return null;
