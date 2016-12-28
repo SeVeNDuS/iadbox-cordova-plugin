@@ -6,7 +6,7 @@ repositories{
 }
 
 dependencies {
- 	compile(name:'androidstudio_sdk_1_4_11_iadbox-release', ext:'aar')
+ 	compile project(':iadbox-release')
 }
 
 android {

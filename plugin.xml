@@ -1,6 +1,6 @@
  <?xml version="1.0" encoding="UTF-8"?>
     <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="iadbox-cordova-plugin" version="0.0.1">
+        id="iadbox-cordova-plugin" version="1.0.0">
     <name>iAdBox</name>
     <engines>
         <engine name="cordova" version=">=3.0.0" />
@@ -38,6 +38,6 @@
 
         <source-file src="android/iAdBoxPlugin.java" target-dir="src/uk/mondosports/plugins/iadbox" />
         <framework src="android/iadbox-build.gradle" custom="true" type="gradleReference" />
-        <resource-file src="android/androidstudio_sdk_1_4_11_iadbox-release.aar" target="libs/androidstudio_sdk_1_4_11_iadbox-release.aar" />
+        <resource-file src="android/androidstudio_sdk_1_5_3_scanbuy-release.aar" target="libs/iadbox-release.aar" />
     </platform>
 </plugin>
