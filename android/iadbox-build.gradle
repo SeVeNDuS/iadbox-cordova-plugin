@@ -6,7 +6,7 @@ repositories{
 }
 
 dependencies {
- 	compile project(':iadbox-release')
+ 	compile(name:'iadbox-release', ext: 'aar')
 }
 
 android {
