@@ -164,7 +164,6 @@ public class iAdBoxPlugin extends CordovaPlugin {
                         .createUser(cordova.getActivity(),
                                 externalId,
                                 affiliateId,
-                                pushDeviceRegistrationId,
                                 new OnResponseListener() {
                                     @Override
                                     public void onSuccess(String s) {
@@ -199,7 +198,6 @@ public class iAdBoxPlugin extends CordovaPlugin {
                             .createSession(cordova.getActivity(),
                                     externalId,
                                     affiliateId,
-                                    pushDeviceRegistrationId,
                                     new OnResponseListener() {
                                         @Override
                                         public void onSuccess(String s) {
