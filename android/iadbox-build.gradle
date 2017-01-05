@@ -2,11 +2,13 @@ repositories{
 	jcenter()
 	flatDir{
   		dirs 'android'
+  		dirs 'libs'
 	}
 }
 
 dependencies {
- 	compile(name:'iadbox-release', ext: 'aar')
+	compile 'com.google.firebase:firebase-messaging:+'
+ 	compile name: 'iadbox-release', ext: 'aar'
 }
 
 android {
