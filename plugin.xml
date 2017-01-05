@@ -1,23 +1,23 @@
  <?xml version="1.0" encoding="UTF-8"?>
     <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="iadbox-cordova-plugin" version="1.0.1">
-    <name>iAdBox</name>
+        id="iadbox-cordova-plugin" version="1.0.2">
+    <name>iadbox</name>
     <engines>
         <engine name="cordova" version=">=3.0.0" />
     </engines>
-    <description>iAdBox Cordova Plugin</description>
+    <description>iadbox Cordova Plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,iadbox,ads</keywords>
-    <js-module src="www/iadbox.js" name="iAdBox">
+    <js-module src="www/iadbox.js" name="iadbox">
         <clobbers target="window.plugins.iadbox" />
     </js-module>
 
     <platform name="android">
-        <framework src="com.google.android.gms:play-services-ads:+" />
+        <framework src="com.google.firebase:firebase-messaging:+" />
         
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="iAdBox">
-                <param name="android-package" value="uk.mondosports.plugins.iadbox.iAdBoxPlugin"/>
+            <feature name="iadbox">
+                <param name="android-package" value="uk.mondosports.plugins.iadbox.iadboxPlugin"/>
             </feature>
         </config-file>
 
@@ -30,14 +30,31 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <activity android:configChanges="keyboard|keyboardHidden|orientation|screenSize" android:name="com.qustodian.sdk.WebActivity" android:label="@string/qustodian_sdk" android:theme="@style/QustodianSdkManagerTheme" ></activity>
-            <activity android:name="com.qustodian.sdk.NotificationActivity" android:label="@string/qustodian_sdk" android:theme="@style/QustodianSdkManagerTheme" ></activity>
+            <activity 
+                android:configChanges="keyboard|keyboardHidden|orientation|screenSize" 
+                android:name="com.qustodian.sdk.WebActivity" 
+                android:label="@string/qustodian_sdk" 
+                android:theme="@style/QustodianSdkManagerTheme" />
+            <activity 
+                android:name="com.qustodian.sdk.NotificationActivity" 
+                android:label="@string/qustodian_sdk" 
+                android:theme="@style/QustodianSdkManagerTheme" />
+            <service 
+                android:name="com.qustodian.sdk.androidutils.FcmListenerService">
+                <intent-filter>
+                    <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                </intent-filter>
+            </service>
             <!-- Google Play Services -->
-            <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+            <meta-data 
+                android:name="com.google.android.gms.version" 
+                android:value="@integer/google_play_services_version" />
         </config-file>
 
-        <source-file src="android/iAdBoxPlugin.java" target-dir="src/uk/mondosports/plugins/iadbox" />
+        <source-file 
+            src="android/iadboxPlugin.java" 
+            target-dir="src/uk/mondosports/plugins/iadbox" />
         <framework src="android/iadbox-build.gradle" custom="true" type="gradleReference" />
-        <resource-file src="android/androidstudio_sdk_1_5_3_scanbuy-release.aar" target="libs/iadbox-release.aar" />
+        <resource-file src="android/androidstudio_sdk_1_5_4_iadbox-release.aar" target="libs/iadbox-release.aar" />
     </platform>
 </plugin>

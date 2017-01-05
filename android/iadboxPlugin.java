@@ -1,6 +1,8 @@
 package uk.mondosports.plugins.iadbox;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +11,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 
-import com.google.android.gms.iid.InstanceID;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.qustodian.sdk.*;
 
 import org.apache.cordova.CallbackContext;
@@ -21,10 +23,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class iAdBoxPlugin extends CordovaPlugin {
+public class iadboxPlugin extends CordovaPlugin {
 
-    private static final String LOGTAG = "iAdBoxPlugin";
-    private static final String DEFAULT_AFFILIATE_ID = "futmondo";
+    private static final String LOGTAG = "iadboxPlugin";
 
     private static final String ACTION_CREATE_USER_AND_SESSION = "createUserAndSession";
     private static final String ACTION_CREATE_USER = "createUser";
@@ -65,9 +66,9 @@ public class iAdBoxPlugin extends CordovaPlugin {
                 result = customize(args, callbackContext);
             }
         } catch (JSONException e) {
-            callbackContext.error(e.getMessage());
+            callbackContext.error(logException(e));
         } catch (Exception e) {
-            callbackContext.error(e.getMessage());
+            callbackContext.error(logException(e));
         }
 
         if (result != null) callbackContext.sendPluginResult( result );
@@ -162,28 +163,28 @@ public class iAdBoxPlugin extends CordovaPlugin {
                 try {
                     Qustodian.getInstance(cordova.getActivity())
                         .createUser(cordova.getActivity(),
-                                externalId,
-                                affiliateId,
-                                new OnResponseListener() {
-                                    @Override
-                                    public void onSuccess(String s) {
-                                        Log.w(LOGTAG, "createUser: onResponseListener onSuccess: " + s);
-                                        if (executeCreateSession) {
-                                            cordova.getActivity().runOnUiThread(runCreateSession(affiliateId, externalId, pushDeviceRegistrationId, callbackContext));
-                                        } else {
-                                            callbackContext.success(s);
-                                        }
+                            externalId,
+                            affiliateId,
+                            new OnResponseListener() {
+                                @Override
+                                public void onSuccess(String s) {
+                                    Log.w(LOGTAG, "createUser: onResponseListener onSuccess: " + s);
+                                    if (executeCreateSession) {
+                                        cordova.getActivity().runOnUiThread(runCreateSession(affiliateId, externalId, pushDeviceRegistrationId, callbackContext));
+                                    } else {
+                                        callbackContext.success(s);
                                     }
+                                }
 
-                                    @Override
-                                    public void onError(int i, String s) {
-                                        Log.w(LOGTAG, "createUser: onResponseListener onFailure " + s);
-                                        callbackContext.error(s);
-                                    }
-                                });
+                                @Override
+                                public void onError(int i, String s) {
+                                    Log.w(LOGTAG, "createUser: onResponseListener onError " + s);
+                                    callbackContext.error(s);
+                                }
+                            });
 
                 } catch (RuntimeException e) {
-                    callbackContext.error(e.getMessage());
+                    callbackContext.error(logException(e));
                 }
             }
         };
@@ -195,25 +196,25 @@ public class iAdBoxPlugin extends CordovaPlugin {
             public void run() {
                 try {
                     Qustodian.getInstance(cordova.getActivity())
-                            .createSession(cordova.getActivity(),
-                                    externalId,
-                                    affiliateId,
-                                    new OnResponseListener() {
-                                        @Override
-                                        public void onSuccess(String s) {
-                                            Log.w(LOGTAG, "createSession: onResponseListener onSuccess: " + s);
-                                            callbackContext.success(s);
-                                        }
+                        .createSession(cordova.getActivity(),
+                            externalId,
+                            affiliateId,
+                            new OnResponseListener() {
+                                @Override
+                                public void onSuccess(String s) {
+                                    Log.w(LOGTAG, "createSession: onResponseListener onSuccess: " + s);
+                                    callbackContext.success(s);
+                                }
 
-                                        @Override
-                                        public void onError(int i, String s) {
-                                            Log.w(LOGTAG, "createSession: onResponseListener onFailure " + s);
-                                            callbackContext.error(s);
-                                        }
-                                    });
+                                @Override
+                                public void onError(int i, String s) {
+                                    Log.w(LOGTAG, "createSession: onResponseListener onError " + s);
+                                    callbackContext.error(s);
+                                }
+                            });
 
                 } catch (RuntimeException e) {
-                    callbackContext.error(e.getMessage());
+                    callbackContext.error(logException(e));
                 }
             }
         };
@@ -228,7 +229,7 @@ public class iAdBoxPlugin extends CordovaPlugin {
                     Qustodian.getInstance(context).openInbox(context);
                     callbackContext.success();
                 } catch (RuntimeException e) {
-                    callbackContext.error(e.getMessage());
+                    callbackContext.error(logException(e));
                 }
             }
         };
@@ -241,22 +242,22 @@ public class iAdBoxPlugin extends CordovaPlugin {
                 try {
                     Context context = cordova.getActivity();
                     Qustodian.getInstance(context)
-                            .getMessagesCount(context,
-                                    new OnResponseMessagesCountListener() {
-                                        @Override
-                                        public void onSuccess(int messageCount) {
-                                            Log.w(LOGTAG, "OnResponseMessagesCountListener onSuccess: " + messageCount);
-                                            callbackContext.success(messageCount);
-                                        }
+                        .getMessagesCount(context,
+                            new OnResponseMessagesCountListener() {
+                                @Override
+                                public void onSuccess(int messageCount) {
+                                    Log.w(LOGTAG, "OnResponseMessagesCountListener onSuccess: " + messageCount);
+                                    callbackContext.success(messageCount);
+                                }
 
-                                        @Override
-                                        public void onError(int i, String s) {
-                                            Log.w(LOGTAG, "OnResponseMessagesCountListener onFailure " + s);
-                                            callbackContext.error(s);
-                                        }
-                                    });
+                                @Override
+                                public void onError(int i, String s) {
+                                    Log.w(LOGTAG, "OnResponseMessagesCountListener onError " + s);
+                                    callbackContext.error(s);
+                                }
+                            });
                 } catch (RuntimeException e) {
-                    callbackContext.error(e.getMessage());
+                    callbackContext.error(logException(e));
                 }
             }
         };
@@ -280,25 +281,31 @@ public class iAdBoxPlugin extends CordovaPlugin {
                     }
                     callbackContext.success();
                 } catch (RuntimeException e) {
-                    callbackContext.error(e.getMessage());
+                    callbackContext.error(logException(e));
                 }
             }
         };
     };
 
     private String getPushDeviceRegistrationId(String projectId) {
-        String authorizedEntity = projectId; // Project id from Google Developer Console
-        String scope = "GCM"; // e.g. communicating using GCM, but you can use any
-        // URL-safe characters up to a maximum of 1000, or
-        // you can also leave it blank.
-        String token;
+        String scope = "FCM";
+        String token = "";
 
         try {
-            token = InstanceID.getInstance(cordova.getActivity().getApplicationContext()).getToken(authorizedEntity, scope);
+            token = FirebaseInstanceId.getInstance().getToken(projectId, scope);
         }
-        catch (IOException e) {
-            token = "";
+        catch (Exception e) {
+            logException(e);
         }
         return token;
+    }
+
+    private String logException(Exception e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String errorMessage = e.getMessage() + "\n" + sw.toString();
+        Log.e(LOGTAG, errorMessage);
+        return errorMessage;
     }
 }
