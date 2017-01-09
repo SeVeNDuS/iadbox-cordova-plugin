@@ -1,6 +1,6 @@
 var exec = require('cordova/exec');
 
-var iAdBoxPlugin = {
+var iadboxPlugin = {
 	createUserAndSession: function(affiliateId, externalId, googleProjectId, successCallback, failureCallback) {
 		var options = [];
 		
@@ -10,7 +10,7 @@ var iAdBoxPlugin = {
 			"googleProjectId": googleProjectId
 		});
 		
-		cordova.exec(successCallback, failureCallback, 'iAdBox', 'createUserAndSession', options);
+		cordova.exec(successCallback, failureCallback, 'iadbox', 'createUserAndSession', options);
 	},
 
 	createUser: function(affiliateId, externalId, googleProjectId, successCallback, failureCallback) {
@@ -22,7 +22,7 @@ var iAdBoxPlugin = {
 			"googleProjectId": googleProjectId
 		});
 		
-		cordova.exec(successCallback, failureCallback, 'iAdBox', 'createUser', options);
+		cordova.exec(successCallback, failureCallback, 'iadbox', 'createUser', options);
 	},
 
 	createSession: function(affiliateId, externalId, googleProjectId, successCallback, failureCallback) {
@@ -34,13 +34,13 @@ var iAdBoxPlugin = {
 			"googleProjectId": googleProjectId
 		});
 		
-		cordova.exec(successCallback, failureCallback, 'iAdBox', 'createSession', options);
+		cordova.exec(successCallback, failureCallback, 'iadbox', 'createSession', options);
 	},
 
 	openInbox: function(successCallback, failureCallback) {
 		var options = [];
 		
-		cordova.exec(successCallback, failureCallback, 'iAdBox', 'openInbox', options);
+		cordova.exec(successCallback, failureCallback, 'iadbox', 'openInbox', options);
 	},
 
 	customize: function(theme, borderColor, title, successCallback, failureCallback) {
@@ -52,14 +52,14 @@ var iAdBoxPlugin = {
 			"title": title
 		});
 
-		cordova.exec(successCallback, failureCallback, 'iAdBox', 'customize', options);
+		cordova.exec(successCallback, failureCallback, 'iadbox', 'customize', options);
 	},
 
 	getMessagesCount: function(successCallback, failureCallback) {
 		var options = [];
 		
-		cordova.exec(successCallback, failureCallback, 'iAdBox', 'getMessagesCount', options);
+		cordova.exec(successCallback, failureCallback, 'iadbox', 'getMessagesCount', options);
 	}
 };
 
-module.exports = iAdBoxPlugin;
+module.exports = iadboxPlugin;
