@@ -11,13 +11,13 @@ cordova plugin add iadbox-cordova-plugin
 or
 
 ```
-cordova plugin add https://github.com/SeVeNDuS/iadbox-cordova-plugin.git
+cordova plugin add https://github.com/iadbox/iadbox-cordova-plugin.git
 ```
 
 or
 
 ```
-phonegap local plugin add https://github.com/SeVeNDuS/iadbox-cordova-plugin.git
+phonegap local plugin add https://github.com/iadbox/iadbox-cordova-plugin.git
 ```
 
 ## How do I use it? ##
