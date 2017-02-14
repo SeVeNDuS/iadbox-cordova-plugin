@@ -1,6 +1,6 @@
 {
   "name": "iadbox-cordova-plugin",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "iadbox Cordova Plugin",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SeVeNDuS/iadbox-cordova-plugin.git"
+    "url": "git+https://github.com/iadbox/iadbox-cordova-plugin.git"
   },
   "keywords": [
     "cordova",
@@ -17,7 +17,7 @@
   "author": "SeVeNDuS",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/SeVeNDuS/iadbox-cordova-plugin/issues"
+    "url": "https://github.com/iadbox/iadbox-cordova-plugin/issues"
   },
-  "homepage": "https://github.com/SeVeNDuS/iadbox-cordova-plugin#readme"
+  "homepage": "https://github.com/iadbox/iadbox-cordova-plugin#readme"
 }

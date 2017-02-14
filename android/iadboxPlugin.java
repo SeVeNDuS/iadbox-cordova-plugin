@@ -1,4 +1,4 @@
-package uk.mondosports.plugins.iadbox;
+package com.iadbox.cordova.plugin;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,6 +32,7 @@ public class iadboxPlugin extends CordovaPlugin {
     private static final String ACTION_CREATE_SESSION = "createSession";
     private static final String ACTION_OPEN_INBOX = "openInbox";
     private static final String ACTION_GET_MESSAGES_COUNT = "getMessagesCount";
+    private static final String ACTION_GET_INBOX_URL = "getInboxUrl";
     private static final String ACTION_CUSTOMIZE = "customize";
 
     private static final String OPT_EXTERNAL_ID = "externalId";
@@ -62,6 +63,8 @@ public class iadboxPlugin extends CordovaPlugin {
                 result = openInbox(callbackContext);
             }  else if (ACTION_GET_MESSAGES_COUNT.equals(action)) {
                 result = getMessagesCount(callbackContext);
+            }  else if (ACTION_GET_INBOX_URL.equals(action)) {
+                result = getInboxUrl(callbackContext);
             } else if (ACTION_CUSTOMIZE.equals(action)) {
                 result = customize(args, callbackContext);
             }
@@ -144,6 +147,12 @@ public class iadboxPlugin extends CordovaPlugin {
         return null;
     }
 
+    private PluginResult getInboxUrl(final CallbackContext callbackContext) throws Exception, JSONException {
+        cordova.getActivity().runOnUiThread(runGetInboxUrl(callbackContext));
+
+        return null;
+    }
+
     private PluginResult customize(JSONArray args, final CallbackContext callbackContext) throws Exception, JSONException {
         JSONObject obj = args.getJSONObject(0);
 
@@ -168,7 +177,7 @@ public class iadboxPlugin extends CordovaPlugin {
                             new OnResponseListener() {
                                 @Override
                                 public void onSuccess(String s) {
-                                    Log.w(LOGTAG, "createUser: onResponseListener onSuccess: " + s);
+                                    Log.d(LOGTAG, "createUser: onResponseListener onSuccess: " + s);
                                     if (executeCreateSession) {
                                         cordova.getActivity().runOnUiThread(runCreateSession(affiliateId, externalId, pushDeviceRegistrationId, callbackContext));
                                     } else {
@@ -178,7 +187,7 @@ public class iadboxPlugin extends CordovaPlugin {
 
                                 @Override
                                 public void onError(int i, String s) {
-                                    Log.w(LOGTAG, "createUser: onResponseListener onError " + s);
+                                    Log.e(LOGTAG, "createUser: onResponseListener onError " + s);
                                     callbackContext.error(s);
                                 }
                             });
@@ -202,13 +211,13 @@ public class iadboxPlugin extends CordovaPlugin {
                             new OnResponseListener() {
                                 @Override
                                 public void onSuccess(String s) {
-                                    Log.w(LOGTAG, "createSession: onResponseListener onSuccess: " + s);
+                                    Log.d(LOGTAG, "createSession: onResponseListener onSuccess: " + s);
                                     callbackContext.success(s);
                                 }
 
                                 @Override
                                 public void onError(int i, String s) {
-                                    Log.w(LOGTAG, "createSession: onResponseListener onError " + s);
+                                    Log.e(LOGTAG, "createSession: onResponseListener onError " + s);
                                     callbackContext.error(s);
                                 }
                             });
@@ -246,13 +255,41 @@ public class iadboxPlugin extends CordovaPlugin {
                             new OnResponseMessagesCountListener() {
                                 @Override
                                 public void onSuccess(int messageCount) {
-                                    Log.w(LOGTAG, "OnResponseMessagesCountListener onSuccess: " + messageCount);
+                                    Log.d(LOGTAG, "OnResponseMessagesCountListener onSuccess: " + messageCount);
                                     callbackContext.success(messageCount);
                                 }
 
                                 @Override
                                 public void onError(int i, String s) {
-                                    Log.w(LOGTAG, "OnResponseMessagesCountListener onError " + s);
+                                    Log.e(LOGTAG, "OnResponseMessagesCountListener onError " + s);
+                                    callbackContext.error(s);
+                                }
+                            });
+                } catch (RuntimeException e) {
+                    callbackContext.error(logException(e));
+                }
+            }
+        };
+    };
+
+    private Runnable runGetInboxUrl(final CallbackContext callbackContext) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Context context = cordova.getActivity();
+                    Qustodian.getInstance(context)
+                        .getInboxUrl(context,
+                            new OnResponseListener() {
+                                @Override
+                                public void onSuccess(String url) {
+                                    Log.d(LOGTAG, "OnResponseListener(runGetInboxUrl) onSuccess: " + url);
+                                    callbackContext.success(url);
+                                }
+
+                                @Override
+                                public void onError(int i, String s) {
+                                    Log.e(LOGTAG, "OnResponseListener(runGetInboxUrl) onError " + s);
                                     callbackContext.error(s);
                                 }
                             });

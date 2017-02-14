@@ -59,6 +59,12 @@ var iadboxPlugin = {
 		var options = [];
 		
 		cordova.exec(successCallback, failureCallback, 'iadbox', 'getMessagesCount', options);
+	},
+
+	getInboxUrl: function(successCallback, failureCallback) {
+		var options = [];
+		
+		cordova.exec(successCallback, failureCallback, 'iadbox', 'getInboxUrl', options);
 	}
 };
 
