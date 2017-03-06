@@ -43,7 +43,6 @@ public class iadboxPlugin extends CordovaPlugin {
     private static final String OPT_EXTERNAL_ID = "externalId";
     private static final String OPT_AFFILIATE_ID = "affiliateId";
     private static final String OPT_PUSH_ID = "pushId";
-    private static final String OPT_THEME = "theme";
     private static final String OPT_BORDER_COLOR = "borderColor";
     private static final String OPT_TITLE = "title";
 
@@ -178,11 +177,10 @@ public class iadboxPlugin extends CordovaPlugin {
     private PluginResult customize(JSONArray args, final CallbackContext callbackContext) throws Exception, JSONException {
         JSONObject obj = args.getJSONObject(0);
 
-        final String theme = obj.getString(OPT_THEME);
         final String borderColor = obj.getString(OPT_BORDER_COLOR);
         final String title = obj.getString(OPT_TITLE);
 
-        cordova.getActivity().runOnUiThread(runCustomize(theme, borderColor, title, callbackContext));
+        cordova.getActivity().runOnUiThread(runCustomize(borderColor, title, callbackContext));
 
         return null;
     }
@@ -392,15 +390,12 @@ public class iadboxPlugin extends CordovaPlugin {
         };
     }
 
-    private Runnable runCustomize(final String theme, final String borderColor, final String title, final CallbackContext callbackContext) {
+    private Runnable runCustomize(final String borderColor, final String title, final CallbackContext callbackContext) {
         return new Runnable() {
             @Override
             public void run() {
                 try {
                     Context context = cordova.getActivity();
-                    if (theme != "") {
-                        //Qustodian.getInstance(context).set.setTheme(theme);
-                    }
                     if (borderColor != "") {
                         int color = Color.parseColor(borderColor);
                         Qustodian.getInstance(context).setBorderColor(color);
