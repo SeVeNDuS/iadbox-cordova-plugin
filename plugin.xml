@@ -11,6 +11,9 @@
     <js-module src="www/iadbox.js" name="iadbox">
         <clobbers target="window.plugins.iadbox" />
     </js-module>
+    <js-module src="www/qustodian_sdk.js" name="QustodianSDK">
+        <clobbers target="window.QustodianSDK" />
+    </js-module>
 
     <platform name="android">
         <framework src="com.google.firebase:firebase-messaging:+" />
@@ -34,25 +37,45 @@
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize" 
                 android:name="com.qustodian.sdk.WebActivity" 
                 android:label="@string/qustodian_sdk" 
-                android:theme="@style/QustodianSdkManagerTheme" />
-            <activity 
-                android:name="com.qustodian.sdk.NotificationActivity" 
-                android:label="@string/qustodian_sdk" 
-                android:theme="@style/QustodianSdkManagerTheme" />
-            <service 
-                android:name="com.qustodian.sdk.androidutils.FcmListenerService">
-                <intent-filter>
-                    <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-                </intent-filter>
-            </service>
+                android:theme="@style/QustodianSdkManagerTheme" 
+                android:launchMode="singleTask"/>
             <!-- Google Play Services -->
             <meta-data 
                 android:name="com.google.android.gms.version" 
                 android:value="@integer/google_play_services_version" />
+
+            <!-- Disable iadbox FcmListenerService-->
+            <service 
+                android:enabled="false" 
+                tools:node="replace"
+                android:name="com.qustodian.sdk.androidutils.FcmListenerService" />
+
         </config-file>
 
         <source-file src="android/iadboxPlugin.java" target-dir="src/com/iadbox/cordova/plugin" />
         <framework src="android/iadbox-build.gradle" custom="true" type="gradleReference" />
         <resource-file src="android/androidstudio_sdk_1_5_5_iadbox-release.aar" target="libs/iadbox-release.aar" />
+    </platform>
+    <platform name="ios">
+
+        <config-file parent="/*" target="config.xml">
+            <feature name="iadbox">
+                <param name="ios-package" value="IadboxPlugin" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+        
+        <framework src="AVFoundation.framework" />
+        <framework src="SystemConfiguration.framework" />
+        <framework src="CoreLocation.framework" />
+        <framework src="QuartzCore.framework" />
+        <framework src="CoreTelephony.framework" />
+        <framework src="AdSupport.framework" />
+
+        <header-file src="ios/Qustodian.h" />
+        <header-file src="ios/IadboxPlugin.h" />
+
+        <source-file src="ios/libQustodian.a" framework="true" />
+        <source-file src="ios/IadboxPlugin.m" />
     </platform>
 </plugin>
