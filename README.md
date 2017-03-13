@@ -1,6 +1,8 @@
 # iadbox Cordova Plugin
 Add support for [iadbox](https://www.iadbox.com/) to your Cordova and Phonegap based mobile apps.
 
+We currently support Android and iOS platforms.
+
 ## How do I install it? ##
 
 If you're like me and using [CLI](http://cordova.apache.org/):

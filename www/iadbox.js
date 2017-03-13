@@ -71,14 +71,12 @@ var iadboxPlugin = {
 		cordova.exec(successCallback, failureCallback, 'iadbox', 'enableExitAppOnBack', options);
 	},
 
-	customize: function(theme, borderColor, title, backButtonEnabled, successCallback, failureCallback) {
+	customize: function(borderColor, title, successCallback, failureCallback) {
 		var options = [];
 		
 		options.push({
-			"theme": theme,
 			"borderColor": borderColor,
-			"title": title,
-			"backButtonEnabled": backButtonEnabled
+			"title": title
 		});
 
 		cordova.exec(successCallback, failureCallback, 'iadbox', 'customize', options);

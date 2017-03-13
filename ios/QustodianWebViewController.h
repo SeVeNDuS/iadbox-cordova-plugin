@@ -48,6 +48,7 @@
 @property (nonatomic, strong) UIColor *color;
 @property (nonatomic, strong) UIColor *textColor;
 @property (nonatomic, strong) NSString *titulo;
+@property (nonatomic, assign) BOOL isBackButtonEnabled;
 @property (nonatomic, weak) id<QustodianWebViewControllerDelegate> delegate;
 #pragma mark -
 

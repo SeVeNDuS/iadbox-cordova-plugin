@@ -164,18 +164,55 @@
 }
 
 
+- (void)disableTopBarBackButton:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"***** disableTopBarBackButton called");
+    CDVPluginResult* pluginResult = nil;
+    [[Qustodian sharedInstance] disableTopBarBackButton];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+//does nothing, this function is only for plugin compatibility
+- (void)enableExitAppOnBack:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
 - (void)customize:(CDVInvokedUrlCommand*)command
 {
+    NSLog(@"***** customize called");
     CDVPluginResult* pluginResult = nil;
     NSDictionary* params = [command.arguments objectAtIndex:0];
     
     if (params != nil && [params count] > 0) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@""];
+        NSString *title = params[@"title"];
+        if (title != nil){
+            NSLog(@"***** setting title");
+            [[Qustodian sharedInstance] setTitle: title];
+        }
+        NSString *borderColor = params[@"borderColor"];
+        if (borderColor != nil){
+            NSLog(@"***** setting borderColor");
+            [[Qustodian sharedInstance] setBorderColor: [self colorFromHexString: borderColor]];
+        }        
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     } else {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
     }
     
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+// Assumes input like "#00FF00" (#RRGGBB).
+- (UIColor *)colorFromHexString:(NSString *)hexString {
+    unsigned rgbValue = 0;
+    NSScanner *scanner = [NSScanner scannerWithString:hexString];
+    [scanner setScanLocation:1]; // bypass '#' character
+    [scanner scanHexInt:&rgbValue];
+    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
 }
 
 

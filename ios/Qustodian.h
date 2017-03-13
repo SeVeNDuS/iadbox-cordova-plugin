@@ -186,6 +186,9 @@ pushDeviceRegistrationId:(NSString *)pushDeviceRegistrationId
 // Gets the url for the specified section
 -(NSString*)getUrl:(NSString *)section withDelegate:(id<QustodianDelegate>)delegate;
 
+// Disables the Back Button in the Top Bar
+-(void)disableTopBarBackButton;
+
 // Get SDK version
 -(NSString*)getSDKVersion;
 

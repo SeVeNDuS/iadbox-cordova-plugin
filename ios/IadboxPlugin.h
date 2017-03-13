@@ -9,5 +9,7 @@
 - (void)getBadge:(CDVInvokedUrlCommand*)command;
 - (void)getUrl:(CDVInvokedUrlCommand*)command;
 - (void)customize:(CDVInvokedUrlCommand*)command;
+- (void)disableTopBarBackButton:(CDVInvokedUrlCommand*)command;
+- (void)enableExitAppOnBack:(CDVInvokedUrlCommand*)command;
 
 @end

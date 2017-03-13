@@ -11,9 +11,6 @@
     <js-module src="www/iadbox.js" name="iadbox">
         <clobbers target="window.plugins.iadbox" />
     </js-module>
-    <js-module src="www/qustodian_sdk.js" name="QustodianSDK">
-        <clobbers target="window.QustodianSDK" />
-    </js-module>
 
     <platform name="android">
         <framework src="com.google.firebase:firebase-messaging:+" />
@@ -75,7 +72,7 @@
         <header-file src="ios/Qustodian.h" />
         <header-file src="ios/IadboxPlugin.h" />
 
-        <source-file src="ios/libQustodian.a" framework="true" />
+        <source-file src="ios/libQustodian_1.5.2.a" framework="true" />
         <source-file src="ios/IadboxPlugin.m" />
     </platform>
 </plugin>
