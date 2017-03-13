@@ -11,6 +11,9 @@
     "url": "git+https://github.com/iadbox/iadbox-cordova-plugin.git"
   },
   "keywords": [
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
     "cordova",
     "iadbox"
   ],
