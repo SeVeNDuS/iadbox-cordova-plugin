@@ -1,37 +1,53 @@
 var exec = require('cordova/exec');
 
 var iadboxPlugin = {
-	createUserAndSession: function(affiliateId, externalId, googleProjectId, successCallback, failureCallback) {
+
+    USER_ID_KEY: 'iadbox_user_id',
+    authenticateSuccessCallback: null,
+
+	authenticateUser: function(affiliateId, externalId, pushId, successCallback, failureCallback) {
 		var options = [];
 		
 		options.push({
 			"affiliateId": affiliateId,
 			"externalId": externalId,
-			"googleProjectId": googleProjectId
+			"pushId": pushId
 		});
-		
-		cordova.exec(successCallback, failureCallback, 'iadbox', 'createUserAndSession', options);
+
+        this.authenticateSuccessCallback = successCallback;
+
+        user_id = window.localStorage.getItem(this.USER_ID_KEY);
+        if (user_id == null){
+        	cordova.exec(this.saveUserIdAndCallback.bind(this), failureCallback, 'iadbox', 'createUser', options);
+        } else {
+			cordova.exec(this.saveUserIdAndCallback.bind(this), failureCallback, 'iadbox', 'createSession', options);
+		}
 	},
 
-	createUser: function(affiliateId, externalId, googleProjectId, successCallback, failureCallback) {
+	saveUserIdAndCallback: function(user_id) {
+		window.localStorage.setItem(this.USER_ID_KEY, user_id);
+		this.authenticateSuccessCallback.call(user_id);
+	},
+
+	createUser: function(affiliateId, externalId, pushId, successCallback, failureCallback) {
 		var options = [];
 		
 		options.push({
 			"affiliateId": affiliateId,
 			"externalId": externalId,
-			"googleProjectId": googleProjectId
+			"pushId": pushId
 		});
 		
 		cordova.exec(successCallback, failureCallback, 'iadbox', 'createUser', options);
 	},
 
-	createSession: function(affiliateId, externalId, googleProjectId, successCallback, failureCallback) {
+	createSession: function(affiliateId, externalId, pushId, successCallback, failureCallback) {
 		var options = [];
 		
 		options.push({
 			"affiliateId": affiliateId,
 			"externalId": externalId,
-			"googleProjectId": googleProjectId
+			"pushId": pushId
 		});
 		
 		cordova.exec(successCallback, failureCallback, 'iadbox', 'createSession', options);
@@ -43,11 +59,22 @@ var iadboxPlugin = {
 		cordova.exec(successCallback, failureCallback, 'iadbox', 'openInbox', options);
 	},
 
-	customize: function(theme, borderColor, title, successCallback, failureCallback) {
+	disableTopBarBackButton: function(successCallback, failureCallback) {
+		var options = [];
+		
+		cordova.exec(successCallback, failureCallback, 'iadbox', 'disableTopBarBackButton', options);
+	},
+
+	enableExitAppOnBack: function(successCallback, failureCallback) {
+		var options = [];
+		
+		cordova.exec(successCallback, failureCallback, 'iadbox', 'enableExitAppOnBack', options);
+	},
+
+	customize: function(borderColor, title, successCallback, failureCallback) {
 		var options = [];
 		
 		options.push({
-			"theme": theme,
 			"borderColor": borderColor,
 			"title": title
 		});
@@ -55,10 +82,20 @@ var iadboxPlugin = {
 		cordova.exec(successCallback, failureCallback, 'iadbox', 'customize', options);
 	},
 
-	getMessagesCount: function(successCallback, failureCallback) {
+	getBadge: function(successCallback, failureCallback) {
 		var options = [];
 		
-		cordova.exec(successCallback, failureCallback, 'iadbox', 'getMessagesCount', options);
+		cordova.exec(successCallback, failureCallback, 'iadbox', 'getBadge', options);
+	},
+
+	getUrl: function(action, successCallback, failureCallback) {
+		var options = [];
+		
+		options.push({
+			"action": action
+		});
+
+		cordova.exec(successCallback, failureCallback, 'iadbox', 'getUrl', options);
 	}
 };
 

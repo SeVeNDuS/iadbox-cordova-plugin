@@ -1,6 +1,6 @@
  <?xml version="1.0" encoding="UTF-8"?>
     <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="iadbox-cordova-plugin" version="1.0.2">
+        id="iadbox-cordova-plugin" version="1.0.3">
     <name>iadbox</name>
     <engines>
         <engine name="cordova" version=">=3.0.0" />
@@ -17,7 +17,7 @@
         
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="iadbox">
-                <param name="android-package" value="uk.mondosports.plugins.iadbox.iadboxPlugin"/>
+                <param name="android-package" value="com.iadbox.cordova.plugin.iadboxPlugin"/>
             </feature>
         </config-file>
 
@@ -34,27 +34,45 @@
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize" 
                 android:name="com.qustodian.sdk.WebActivity" 
                 android:label="@string/qustodian_sdk" 
-                android:theme="@style/QustodianSdkManagerTheme" />
-            <activity 
-                android:name="com.qustodian.sdk.NotificationActivity" 
-                android:label="@string/qustodian_sdk" 
-                android:theme="@style/QustodianSdkManagerTheme" />
-            <service 
-                android:name="com.qustodian.sdk.androidutils.FcmListenerService">
-                <intent-filter>
-                    <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-                </intent-filter>
-            </service>
+                android:theme="@style/QustodianSdkManagerTheme" 
+                android:launchMode="singleTask"/>
             <!-- Google Play Services -->
             <meta-data 
                 android:name="com.google.android.gms.version" 
                 android:value="@integer/google_play_services_version" />
+
+            <!-- Disable iadbox FcmListenerService-->
+            <service 
+                android:enabled="false" 
+                tools:node="replace"
+                android:name="com.qustodian.sdk.androidutils.FcmListenerService" />
+
         </config-file>
 
-        <source-file 
-            src="android/iadboxPlugin.java" 
-            target-dir="src/uk/mondosports/plugins/iadbox" />
+        <source-file src="android/iadboxPlugin.java" target-dir="src/com/iadbox/cordova/plugin" />
         <framework src="android/iadbox-build.gradle" custom="true" type="gradleReference" />
-        <resource-file src="android/androidstudio_sdk_1_5_4_iadbox-release.aar" target="libs/iadbox-release.aar" />
+        <resource-file src="android/androidstudio_sdk_1_5_5_iadbox-release.aar" target="libs/iadbox-release.aar" />
+    </platform>
+    <platform name="ios">
+
+        <config-file parent="/*" target="config.xml">
+            <feature name="iadbox">
+                <param name="ios-package" value="IadboxPlugin" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+        
+        <framework src="AVFoundation.framework" />
+        <framework src="SystemConfiguration.framework" />
+        <framework src="CoreLocation.framework" />
+        <framework src="QuartzCore.framework" />
+        <framework src="CoreTelephony.framework" />
+        <framework src="AdSupport.framework" />
+
+        <header-file src="ios/Qustodian.h" />
+        <header-file src="ios/IadboxPlugin.h" />
+
+        <source-file src="ios/libQustodian_1.5.2.a" framework="true" />
+        <source-file src="ios/IadboxPlugin.m" />
     </platform>
 </plugin>
