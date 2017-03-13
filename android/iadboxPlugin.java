@@ -49,12 +49,12 @@ public class iadboxPlugin extends CordovaPlugin {
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-        Log.v(LOGTAG, "Plugin initialized");
+        Log.d(LOGTAG, "Plugin initialized");
     }
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        Log.v(LOGTAG, action);
+        Log.d(LOGTAG, "executing: " + action);
         PluginResult result = null;
         try {
             if (ACTION_CREATE_USER.equals(action)) {

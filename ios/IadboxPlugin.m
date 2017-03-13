@@ -14,7 +14,6 @@
 - (void)createUser:(CDVInvokedUrlCommand*)command
 {
     NSDictionary *params = [command.arguments objectAtIndex:0];
-    NSLog(@"***** createUser called");
     
     if (params != nil && [params count] == 3) {
         if (createUserCallbackId == nil)
@@ -50,7 +49,6 @@
 - (void)createSession:(CDVInvokedUrlCommand*)command
 {
     NSDictionary *params = [command.arguments objectAtIndex:0];
-    NSLog(@"***** createSession called");
     
     if (params != nil && [params count] == 3) {
         if (createSessionCallbackId == nil)
@@ -95,7 +93,6 @@
 
 - (void)getBadge:(CDVInvokedUrlCommand*)command
 {
-    NSLog(@"***** getBadge called");
     if (getMessageCountCallbackId == nil)
         getMessageCountCallbackId = command.callbackId;
     
@@ -104,7 +101,6 @@
 
 -(void)messageCountReceived:(int)_messages_count withError:(NSError *)error
 {
-    NSLog(@"***** messageCountReceived called");
     
     CDVPluginResult *pluginResult = nil;
     if(error)
@@ -134,7 +130,6 @@
     }
     else
     {
-        NSLog(@"***** dealsReceived: %d", _has_deals);
         int messages_count = _has_deals ? 1 : 0;
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:messages_count];
         
@@ -146,7 +141,6 @@
 
 - (void)getUrl:(CDVInvokedUrlCommand*)command
 {
-    NSLog(@"***** getUrl called");
     CDVPluginResult* pluginResult = nil;
     NSDictionary* params = [command.arguments objectAtIndex:0];
     
@@ -155,7 +149,6 @@
             getUrl:params[@"action"] 
             withDelegate:self];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:url];
-        NSLog(@"***** getUrl: %@", url);
     } else {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
     }
@@ -166,7 +159,6 @@
 
 - (void)disableTopBarBackButton:(CDVInvokedUrlCommand*)command
 {
-    NSLog(@"***** disableTopBarBackButton called");
     CDVPluginResult* pluginResult = nil;
     [[Qustodian sharedInstance] disableTopBarBackButton];
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -183,19 +175,16 @@
 
 - (void)customize:(CDVInvokedUrlCommand*)command
 {
-    NSLog(@"***** customize called");
     CDVPluginResult* pluginResult = nil;
     NSDictionary* params = [command.arguments objectAtIndex:0];
     
     if (params != nil && [params count] > 0) {
         NSString *title = params[@"title"];
         if (title != nil){
-            NSLog(@"***** setting title");
             [[Qustodian sharedInstance] setTitle: title];
         }
         NSString *borderColor = params[@"borderColor"];
         if (borderColor != nil){
-            NSLog(@"***** setting borderColor");
             [[Qustodian sharedInstance] setBorderColor: [self colorFromHexString: borderColor]];
         }        
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
