@@ -22,7 +22,11 @@ or
 phonegap local plugin add https://github.com/iadbox/iadbox-cordova-plugin.git
 ```
 
+If you want to see a full example of a simple app using this plugin you can check: [iadbox-cordova-app](https://github.com/iadbox/iadbox-cordova-app).
+
 ## How do I use it? ##
+
+Here is a demonstration of the main functions.
 
 ```javascript
 document.addEventListener('deviceready', function() {
