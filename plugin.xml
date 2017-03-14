@@ -48,6 +48,10 @@
                 android:name="com.qustodian.sdk.androidutils.FcmListenerService" />
 
         </config-file>
+        
+        <edit-config file="AndroidManifest.xml" target="/manifest" mode="merge">
+            <manifest xmlns:tools="http://schemas.android.com/tools" />
+        </edit-config>
 
         <source-file src="android/iadboxPlugin.java" target-dir="src/com/iadbox/cordova/plugin" />
         <framework src="android/iadbox-build.gradle" custom="true" type="gradleReference" />
