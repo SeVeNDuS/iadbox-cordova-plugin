@@ -12,9 +12,7 @@
         <clobbers target="window.plugins.iadbox" />
     </js-module>
 
-    <platform name="android">
-        <framework src="com.google.firebase:firebase-messaging:+" />
-        
+    <platform name="android">        
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="iadbox">
                 <param name="android-package" value="com.iadbox.cordova.plugin.iadboxPlugin"/>

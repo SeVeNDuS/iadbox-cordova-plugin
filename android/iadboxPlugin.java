@@ -12,7 +12,6 @@ import android.graphics.Color;
 import android.util.Log;
 import android.net.Uri;
 
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.qustodian.sdk.*;
 import com.qustodian.sdk.androidutils.ShareHelper;
 
