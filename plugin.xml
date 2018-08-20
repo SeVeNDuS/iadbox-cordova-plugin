@@ -53,7 +53,8 @@
 
         <source-file src="android/iadboxPlugin.java" target-dir="src/com/iadbox/cordova/plugin" />
         <framework src="android/iadbox-build.gradle" custom="true" type="gradleReference" />
-        <resource-file src="android/androidstudio_sdk_1_5_5_iadbox-release.aar" target="libs/iadbox-release.aar" />
+        <framework src="com.google.android.gms:play-services:11.0.1" />
+        <resource-file src="android/androidstudio_sdk_1_5_6_iadbox-release.aar" target="libs/iadbox-release.aar" />
     </platform>
     <platform name="ios">
 
