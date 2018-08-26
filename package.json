@@ -1,6 +1,6 @@
 {
   "name": "iadbox-cordova-plugin",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "iadbox Cordova Plugin",
   "main": "index.js",
   "scripts": {
