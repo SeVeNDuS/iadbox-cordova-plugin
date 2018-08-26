@@ -1,11 +1,15 @@
 #import "IadboxPlugin.h"
 #import "Qustodian.h"
+#import "QustodianWebViewController.h"
 #import <Cordova/CDVPlugin.h>
 
 @interface IadboxPlugin(){
     NSString *createUserCallbackId;
     NSString *createSessionCallbackId;
     NSString *getMessageCountCallbackId;
+    NSString *borderColor;
+    NSString *title;
+    QustodianWebViewController *viewController;
 }
 
 @end
@@ -85,7 +89,36 @@
 - (void)openInbox:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* pluginResult = nil;
-    [[Qustodian sharedInstance] openInbox:self];
+
+    UIWindow *keyWindow = [[[UIApplication sharedApplication] delegate] window];
+    CGRect r = CGRectMake(0, 0, keyWindow.bounds.size.width, keyWindow.bounds.size.height);
+    viewController = [[QustodianWebViewController alloc] initWithFrame:r andType:QUSTODIAN_INBOX];
+    viewController.color = [self colorFromHexString: borderColor];
+    viewController.titulo = title;
+    viewController.isBackButtonEnabled = NO;
+    UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:viewController];    
+    if (keyWindow.rootViewController != nil)
+    {
+        if (keyWindow.rootViewController.presentedViewController != nil)
+        {
+            [keyWindow.rootViewController.presentedViewController presentViewController:navigation animated:YES completion:^(){}];
+        }
+        else
+        {
+            [keyWindow.rootViewController presentViewController:navigation animated:YES completion:^(){}];
+        }
+    }
+    
+    //[[Qustodian sharedInstance] openInbox:self];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
+- (void)reload:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* pluginResult = nil;
+    [viewController reloadWeb];
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
@@ -179,11 +212,11 @@
     NSDictionary* params = [command.arguments objectAtIndex:0];
     
     if (params != nil && [params count] > 0) {
-        NSString *title = params[@"title"];
+        title = params[@"title"];
         if (title != nil){
             [[Qustodian sharedInstance] setTitle: title];
         }
-        NSString *borderColor = params[@"borderColor"];
+        borderColor = params[@"borderColor"];
         if (borderColor != nil){
             [[Qustodian sharedInstance] setBorderColor: [self colorFromHexString: borderColor]];
         }        

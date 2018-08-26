@@ -54,7 +54,7 @@
         <source-file src="android/iadboxPlugin.java" target-dir="src/com/iadbox/cordova/plugin" />
         <framework src="android/iadbox-build.gradle" custom="true" type="gradleReference" />
         <framework src="com.google.android.gms:play-services:11.0.1" />
-        <resource-file src="android/androidstudio_sdk_1_5_6_iadbox-release.aar" target="libs/iadbox-release.aar" />
+        <resource-file src="android/androidstudio_sdk_1_5_7_iadbox-release.aar" target="libs/iadbox-release.aar" />
     </platform>
     <platform name="ios">
 
@@ -73,9 +73,10 @@
         <framework src="AdSupport.framework" />
 
         <header-file src="ios/Qustodian.h" />
+        <header-file src="ios/QustodianWebViewController.h" />
         <header-file src="ios/IadboxPlugin.h" />
 
-        <source-file src="ios/libQustodian_1.5.2.a" framework="true" />
+        <source-file src="ios/libQustodian_1.5.3.a" framework="true" />
         <source-file src="ios/IadboxPlugin.m" />
     </platform>
 </plugin>

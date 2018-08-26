@@ -1,11 +1,13 @@
 #import <Cordova/CDVPlugin.h>
 #import "Qustodian.h"
+#import "QustodianWebViewController.h"
 
 @interface IadboxPlugin : CDVPlugin<QustodianDelegate>
 
 - (void)createUser:(CDVInvokedUrlCommand*)command;
 - (void)createSession:(CDVInvokedUrlCommand*)command;
 - (void)openInbox:(CDVInvokedUrlCommand*)command;
+- (void)reload:(CDVInvokedUrlCommand*)command;
 - (void)getBadge:(CDVInvokedUrlCommand*)command;
 - (void)getUrl:(CDVInvokedUrlCommand*)command;
 - (void)customize:(CDVInvokedUrlCommand*)command;
