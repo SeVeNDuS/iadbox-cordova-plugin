@@ -82,6 +82,10 @@
 
 -(void)openMyPreferences:(id<QustodianDelegate>)delegate;
 
+// Reloads current page
+
+-(void)reloadWeb;
+
 #pragma mark -
 
 

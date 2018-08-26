@@ -59,6 +59,12 @@ var iadboxPlugin = {
 		cordova.exec(successCallback, failureCallback, 'iadbox', 'openInbox', options);
 	},
 
+	reload: function(successCallback, failureCallback) {
+		var options = [];
+		
+		cordova.exec(successCallback, failureCallback, 'iadbox', 'reload', options);
+	},
+
 	disableTopBarBackButton: function(successCallback, failureCallback) {
 		var options = [];
 		

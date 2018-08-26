@@ -31,6 +31,7 @@ public class iadboxPlugin extends CordovaPlugin {
     private static final String ACTION_CREATE_USER = "createUser";
     private static final String ACTION_CREATE_SESSION = "createSession";
     private static final String ACTION_OPEN_INBOX = "openInbox";
+    private static final String ACTION_RELOAD = "reload";
     private static final String ACTION_GET_BADGE = "getBadge";
     private static final String ACTION_GET_URL = "getUrl";
     private static final String ACTION_CUSTOMIZE = "customize";
@@ -62,6 +63,8 @@ public class iadboxPlugin extends CordovaPlugin {
                 result = createSession(args, callbackContext);
             } else if (ACTION_OPEN_INBOX.equals(action)) {
                 result = openInbox(callbackContext);
+            } else if (ACTION_RELOAD.equals(action)) {
+                result = reload(callbackContext);
             } else if (ACTION_GET_BADGE.equals(action)) {
                 result = getBadge(callbackContext);
             } else if (ACTION_GET_URL.equals(action)) {
@@ -122,6 +125,12 @@ public class iadboxPlugin extends CordovaPlugin {
 
     private PluginResult openInbox(final CallbackContext callbackContext) throws Exception, JSONException {
         cordova.getActivity().runOnUiThread(runOpenInbox(callbackContext));
+
+        return null;
+    }
+
+    private PluginResult reload(final CallbackContext callbackContext) throws Exception, JSONException {
+        cordova.getActivity().runOnUiThread(runReload(callbackContext));
 
         return null;
     }
@@ -265,6 +274,21 @@ public class iadboxPlugin extends CordovaPlugin {
                 try {
                     Context context = cordova.getActivity();
                     Qustodian.getInstance(context).openInbox(context);
+                    callbackContext.success();
+                } catch (RuntimeException e) {
+                    callbackContext.error(logException(e));
+                }
+            }
+        };
+    }
+
+    private Runnable runReload(final CallbackContext callbackContext) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Context context = cordova.getActivity();
+                    Qustodian.getInstance(context).reloadBrowser();
                     callbackContext.success();
                 } catch (RuntimeException e) {
                     callbackContext.error(logException(e));
