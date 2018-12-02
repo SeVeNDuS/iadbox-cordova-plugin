@@ -1,6 +1,6 @@
  <?xml version="1.0" encoding="UTF-8"?>
     <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="iadbox-cordova-plugin" version="1.0.5">
+        id="iadbox-cordova-plugin" version="1.0.6">
     <name>iadbox</name>
     <engines>
         <engine name="cordova" version=">=3.0.0" />
@@ -64,6 +64,10 @@
                 <param name="onload" value="true" />
             </feature>
         </config-file>
+
+        <edit-config target="NSLocationWhenInUseUsageDescription" file="*-Info.plist" mode="merge">
+            <string>Need location access to find things nearby</string>
+        </edit-config>
         
         <framework src="AVFoundation.framework" />
         <framework src="SystemConfiguration.framework" />
